@@ -666,6 +666,7 @@ func (p *ControllerRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 		methodParams []*param.MethodParam
 		routerInfo   *ControllerInfo
 		isRunnable   bool
+		urlPattern   string
 	)
 	context := p.pool.Get().(*beecontext.Context)
 	context.Reset(rw, r)
@@ -751,6 +752,13 @@ func (p *ControllerRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 	}
 
 	//execute middleware filters
+	// add by freespace8
+	// 加入路由匹配的pattern
+	urlPattern = urlPath
+	if routerInfo != nil {
+		urlPattern = routerInfo.pattern
+	}
+	context.Input.SetData("RouterPattern", urlPattern)
 	if len(p.filters[BeforeExec]) > 0 && p.execFilter(context, urlPath, BeforeExec) {
 		goto Admin
 	}
