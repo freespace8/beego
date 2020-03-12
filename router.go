@@ -751,6 +751,19 @@ func (p *ControllerRegister) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 	}
 
 	//execute middleware filters
+	// add by freespace8
+	// 加入匹配的路径格式，用来判断权限
+	var newUrlPath string
+	if routerInfo != nil {
+		fmt.Println("！！！   routerInfo.pattern=", routerInfo.pattern)
+		fmt.Println("！！！   urlPath=", urlPath)
+		newUrlPath = routerInfo.pattern
+	} else {
+		newUrlPath = urlPath
+	}
+
+	fmt.Println("！！！   newUrlPath=", newUrlPath)
+
 	if len(p.filters[BeforeExec]) > 0 && p.execFilter(context, urlPath, BeforeExec) {
 		goto Admin
 	}
